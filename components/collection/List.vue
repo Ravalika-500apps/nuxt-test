@@ -1,35 +1,28 @@
 <template>
   <div
-    class="grid grid-rows-3 grid-flow-col grid-cols-4 border w-[80vw] mx-auto my-5 rounded-lg pr-[4px]"
+    class="grid grid-rows-3 grid-flow-col border w-[80vw] mx-auto my-5 rounded-lg pr-[4px]"
   >
     <div
       class="row-span-3 bg-gray-50 border-r p-5 rounded-l-lg h-[calc(100vh-150px)] overflow-auto"
     >
-     <div class="pb-3 w-[100%]">
-        <!-- Adding template to the list -->
-        <button
-          class="bg-white hover:bg-gray-50 hover:text-gray-800 border focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600 focus-visible:outline-offset-2 font-semibold inline-flex items-center justify-center px-3 py-3 rounded-md shadow-sm text-gray-600 text-sm w-[100%]"
-          @click="addTemplate(body)"
-        >
-          <span>
-            <IconCSS name="material-symbols:add" class="mr-2" size="20" />
-          </span>
-          Add Template
-        </button>
-      </div>
-     
+      <!-- Show list of created templates 
+      
+       v-if="
+          emailTemplate.data._rawValue && emailTemplate.data._rawValue.length > 1
+        "
+       -->
       <div
         v-for="(template,index) in emailTemplate.data._rawValue"
         :key="index"
-        class="border p-4 rounded-md mb-3 shadow-sm bg-white"
+        class="border p-4 rounded-md mb-3 shadow-sm bg-white flex group justify-between"
       >
-        <section @click="prefillData(template)">
+        <section>
           <h5 class="font-[500] text-md mb-2">{{ template.name }}</h5>
           <span class="text-gray-600">{{ template.subject }} - </span>
           <span class="text-gray-600">{{ template.body }}</span>
         </section>
-        <div class="flex">
-          <PencilSquareIcon @click="editTemplate(template.uid)" class="h-5 w-5" aria-hidden="true" ></PencilSquareIcon>
+        <div class="flex group-hover:visible invisible">
+          <PencilSquareIcon @click="editTemplate(template)" class="h-5 w-5" aria-hidden="true" ></PencilSquareIcon>
           <TrashIcon @click="deleteTemplate(template.uid)" class="h-5 w-5" aria-hidden="true" ></TrashIcon>
           </div>
       </div>
@@ -65,171 +58,61 @@
         </span>
       </div>
     </div>
-
-
-    <!-- Input field for Template Subject -->
-    <div class="row-span-3 col-span-4 bg-white h-[calc(100vh-150px)]">
-      <div class="bg-gray-50 mx-auto px-5 py-3">
-        <div class="text-center mb-0 rounded-0">
-          <!-- Input field for Template name -->
-          <div class="flex justify-between items-center">
-            <input
-              id="name"
-              v-model="name"
-              type="text"
-              name="name"
-              class="block rounded-md border-0 py-2 px-3 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 w-[50%]"
-              placeholder="Enter Template Name"
-            />
-          </div>
-        </div>
-      </div>
-      <div class="mx-4 mt-4">
-        <input
-          id="email"
-          v-model="subject"
-          type="text"
-          name="name"
-          class="block mb-3 px-3 rounded-md border-0 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 w-[100%]"
-          placeholder="Enter Subject"
-        />
-        <!-- Textarea for template body -->
-        <textarea
-          v-model="body"
-          rows="4"
-          class="p-4 h-[calc(100vh-350px)] block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-300 sm:py-1.5 sm:text-sm sm:leading-6"
-          placeholder="Add Template Body..."
-        />
-        <!-- Buttons for template  -->
-        <div class="flex justify-end mr-3 mt-4">
-          <button
-            type="button"
-            class="border rounded-md bg-white py-2 px-3 text-sm font-semibold text-gray-600 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-3"
-          >
-            Cancel
-          </button>
-          <button
-            type="button"
-            class="rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            Send
-          </button>
-        </div>
-      </div>
-    </div>
-   
+   <CollectionAdd v-if="!show" />
+   <CollectionEdit v-if="show" :templateEmailData="editData" :key="render"/>
   </div>
 </template>
 <script setup lang="ts">
 import { ref } from "vue";
 import { TrashIcon,PencilSquareIcon } from '@heroicons/vue/24/outline'
-
+const render = ref(0)
 
 const props = defineProps({
   // Get Template  Data
   templateData: {
     type: Array,
     default: [
-      { name: "email templates", subject: "Hello", text: "submitted" },
+      { name: "email templates", subject: "Hello", text: "Leave approved" },
     ],
   },
 });
+const editData = ref({});
+const show = ref(false)
 
-// Declaring variables
-let body = ref("");
-let name = ref("");
-let subject = ref("");
+// Prefill data when an existing template is selected
+const editTemplate = (data: object) => {
+show.value = true
+editData.value = JSON.stringify(data)
+  render.value++;
+  console.log("------->", editData)
 
-
-// Prefill data 
-const prefillData = (data: any) => {
-  
-  name.value = data.name;
-  body.value = data.body;
-  subject.value = data.subject;
 };
-
-
 
 const getOptions = {
   method: "GET",
   headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiNGUwNmRkMGZlMWYxNDdlMGJkMjg5OGIyNWE3ZmU1MDciLCJkIjoiMTY4MDA4OCIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODA3MDZ9.v_n-YmDUBXE0F-l3FRkCSSSaWFXBYptTfXVUZgW-Hl8`,
+      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiZTk3YTIxZjM4ZDc4NDgwYjlhYjdhOTI0M2Q0NjViNzgiLCJkIjoiMTY4MDA5NyIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODc4Mjd9.qFyxIJYJLihyxfui4QRMOLjJgwBr95z3N3lWRDz89ZU`,
   },
 };
-
-
 
 var emailTemplate = await useAuthLazyFetch(
     "https://v1-orm-lib.mars.hipso.cc/email-templates/?offset=0&limit=100&sort_column=id&sort_direction=desc",
   getOptions
 );
 
-
-// Add Template to the template data
-const addTemplate = (data: any) => {
-  const postOptions = {
-      method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiNGUwNmRkMGZlMWYxNDdlMGJkMjg5OGIyNWE3ZmU1MDciLCJkIjoiMTY4MDA4OCIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODA3MDZ9.v_n-YmDUBXE0F-l3FRkCSSSaWFXBYptTfXVUZgW-Hl8`,
-    },
-    body: {
-      project_id: "12",
-      name: name.value,
-      subject: subject.value,
-      body: data,
-      is_active: "1",
-      type: "PLAIN_TEXT",
-      share_type: "PRIVATE",
-      category: "Engineering",
-    },
-  };
-
-
-  const addTemplateData =  useAuthLazyFetchPost(
-    "https://v1-orm-lib.mars.hipso.cc/email-templates/",
-    postOptions
-  );
-
-
-  emailTemplate.data._rawValue.push({
-      name: addTemplateData.data._rawValue.name,
-    text: addTemplateData.data._rawValue.body,
-    subject: addTemplateData.data._rawValue.name.subject,
-  });
-  name.value = "";
-  body.value = "";
-  subject.value = "";
-};
-
-
     const deleteTemplate = (data:any) => {
    const deleteOptions = {
     method: "DELETE",
   headers: {
     "Content-Type": "application/json",
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiNGUwNmRkMGZlMWYxNDdlMGJkMjg5OGIyNWE3ZmU1MDciLCJkIjoiMTY4MDA4OCIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODA3MDZ9.v_n-YmDUBXE0F-l3FRkCSSSaWFXBYptTfXVUZgW-Hl8`,
+    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiZTk3YTIxZjM4ZDc4NDgwYjlhYjdhOTI0M2Q0NjViNzgiLCJkIjoiMTY4MDA5NyIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODc4Mjd9.qFyxIJYJLihyxfui4QRMOLjJgwBr95z3N3lWRDz89ZU`,
   },
 }
+
 const deleteTemplateData = useAuthLazyFetchDelete (
     `https://v1-orm-lib.mars.hipso.cc/email-templates/${data}`,
 deleteOptions
-)
-    }
-
-    const editTemplate = (data:any) => {
-   const editOptions = {
-    method: "PUT",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiNmZlZDJiYTgwYThkNGM0MjlhZGZiOGQ1ZTZmZTY0ODAiLCJkIjoiMTY4MDA4NCIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyNzk3Mjl9.5cJkrudAvTWoVRigTNcfQ321W_lOyMm-xsb9rMxuVBE`,
-  },
-}
-const editTemplateData = useAuthLazyFetchPut (
-    `https://v1-orm-lib.mars.hipso.cc/email-templates/${data}`,
-editOptions
 )
     }
 </script>
