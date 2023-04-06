@@ -1,102 +1,227 @@
 <template>
-  <div>
-       <div class="pb-3 w-[100%]">
-          <!-- Adding template to the list -->
-          <button
-            class="bg-white hover:bg-gray-50 hover:text-gray-800 border focus-visible:outline focus-visible:outline-2 focus-visible:outline-indigo-600 focus-visible:outline-offset-2 font-semibold inline-flex items-center justify-center px-3 py-3 rounded-md shadow-sm text-gray-600 text-sm w-[100%]"
-            @click="addTemplate(body)"
+  <button
+    type="button"
+    @click="open = true"
+    class="rounded bg-white py-1 px-2 text-xs font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 flex"
+  >
+    Add User Preferences
+  </button>
+  <TransitionRoot as="template" :show="open">
+    <Dialog as="div" class="relative z-10" @close="open = false">
+      <div class="fixed inset-0" />
+
+      <div class="fixed inset-0 overflow-hidden">
+        <div class="absolute inset-0 overflow-hidden">
+          <div
+            class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16"
           >
-            <span>
-              <IconCSS name="material-symbols:add" class="mr-2" size="20" />
-            </span>
-            Add Template
-          </button>
-        </div>
-      <!-- Input field for Template Subject -->
-      <div class="row-span-3 col-span-4 bg-white h-[calc(100vh-150px)]">
-        <div class="bg-gray-50 mx-auto px-5 py-3">
-          <div class="text-center mb-0 rounded-0">
-            <!-- Input field for Template name -->
-            <div class="flex justify-between items-center">
-              <input
-                id="name"
-                v-model="name"
-                type="text"
-                name="name"
-                class="block rounded-md border-0 py-2 px-3 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 w-[100%]"
-                placeholder="Enter Template Name"
-              />
-            </div>
-          </div>
-        </div>
-        <div class="mx-4 mt-4">
-          <input
-            id="email"
-            v-model="subject"
-            type="text"
-            name="name"
-            class="block mb-3 px-3 rounded-md border-0 py-2 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 w-[100%]"
-            placeholder="Enter Subject"
-          />
-          <!-- Textarea for template body -->
-          <textarea
-            v-model="body"
-            rows="4"
-            class="p-4 h-[calc(100vh-350px)] block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-300 sm:py-1.5 sm:text-sm sm:leading-6"
-            placeholder="Add Template Body..."
-          />
-          <!-- Buttons for template  -->
-          <div class="flex justify-end mr-3 mt-4">
-            <button
-              type="button"
-              class="border rounded-md bg-white py-2 px-3 text-sm font-semibold text-gray-600 shadow-sm hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mr-3"
+            <TransitionChild
+              as="template"
+              enter="transform transition ease-in-out duration-500 sm:duration-700"
+              enter-from="translate-x-full"
+              enter-to="translate-x-0"
+              leave="transform transition ease-in-out duration-500 sm:duration-700"
+              leave-from="translate-x-0"
+              leave-to="translate-x-full"
             >
-              Cancel
-            </button>
-            <button
-              type="button"
-              class="rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-            >
-              Send
-            </button>
+              <DialogPanel class="pointer-events-auto w-screen max-w-md">
+                <form @submit.prevent="addDetails()"
+                  class="flex h-full flex-col divide-y divide-gray-200 bg-white shadow-xl"
+                >
+                  <div class="h-0 flex-1 overflow-y-auto">
+                    <div class="bg-indigo-700 py-6 px-4 sm:px-6">
+                      <div class="flex items-center justify-between">
+                        <DialogTitle
+                          class="text-base font-semibold leading-6 text-white"
+                          >Add User Preferences</DialogTitle
+                        >
+                        <div class="ml-3 flex h-7 items-center">
+                          <button
+                            type="button"
+                            class="rounded-md bg-indigo-700 text-indigo-200 hover:text-white focus:outline-none focus:ring-2 focus:ring-white"
+                            @click="open = false"
+                          >
+                            <span class="sr-only">Close panel</span>
+                            <XMarkIcon class="h-6 w-6" aria-hidden="true" />
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="flex flex-1 flex-col justify-between">
+                      <div class="divide-y divide-gray-200 px-4 sm:px-6">
+                        <div class="space-y-6 pt-6 pb-5">
+                          <div>
+                            <label
+                              for="project-name"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >Fcm</label
+                            >
+                            <div class="mt-2">
+                              <input
+                                type="text"
+                                name="project-name"
+                                id="project-name"  v-model="fcm"
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label
+                              for="comment"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >Mood Message</label
+                            >
+                            <div class="mt-2">
+                              <textarea
+                                rows="4"
+                                name="comment"
+                                id="comment"
+                                class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"
+                                v-model="moodMessage"   />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label
+                              for="project-name"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >Mood Icon</label
+                            >
+                            <input
+                              type="text"
+                              name="project-name"
+                              id="project-name" v-model="moodIcon"
+                              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div>
+                            <label
+                              for="email"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >Sound</label
+                            >
+                            <input
+                              type="text"
+                              name="project-name"
+                              id="project-name" v-model="sound"
+                              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                          </div>
+                          <div class="sm:col-span-2">
+                            <label
+                              for="city"
+                              class="block text-sm font-medium leading-6 text-gray-900]"
+                              >Desktop Notification ?</label
+                            >
+                            <input
+                              type="text"
+                              name="project-name"
+                              id="project-name" v-model="desktopNotifications"
+                              class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                            />
+                            
+                          </div>
+                          <div>
+                            <label
+                              for="project-name"
+                              class="block text-sm font-medium leading-6 text-gray-900" 
+                              >Status</label
+                            >
+                            <div class="mt-2">
+                              <input
+                                type="text" v-model="status"
+                                name="project-name"
+                                id="project-name"
+                                class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                          <div>
+                            <label
+                              for="comment"
+                              class="block text-sm font-medium leading-6 text-gray-900"
+                              >Cdata</label
+                            >
+                            <div class="mt-2">
+                              <textarea
+                                rows="4"
+                                name="comment" v-model="cdata"
+                                id="comment"
+                                class="block w-full rounded-md border-0 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:py-1.5 sm:text-sm sm:leading-6"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                    <button
+                      type="button"
+                      class="rounded-md bg-white py-2 px-3 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                      @click="open = false"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      @click="addDetails()"
+                      type="submit"
+                      class="ml-4 inline-flex justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                    >
+                      Save
+                    </button>
+                  </div>
+                </form>
+              </DialogPanel>
+            </TransitionChild>
           </div>
         </div>
       </div>
-      </div>
-  </template>
-  
-  <script setup lang="ts">
-   
-  // Declaring variables
-  let body = ref("");
-  let name = ref("");
-  let subject = ref("");
-  
-  // Add Template to the template data
-  
-  const addTemplate = (data: any) => {
-    const postOptions = {
-        method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiZTk3YTIxZjM4ZDc4NDgwYjlhYjdhOTI0M2Q0NjViNzgiLCJkIjoiMTY4MDA5NyIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODc4Mjd9.qFyxIJYJLihyxfui4QRMOLjJgwBr95z3N3lWRDz89ZU`,
-      },
-      body: {
-        project_id: "12",
-        name: name.value,
-        subject: subject.value,
-        body: data,
-        is_active: "1",
-        type: "PLAIN_TEXT",
-        share_type: "PRIVATE",
-        category: "Engineering",
-      },
-    };
-  
-    const addTemplateData =  useAuthLazyFetchPost(
-      "https://v1-orm-lib.mars.hipso.cc/email-templates/",
-      postOptions
-    );
-  console.log("addTemplateData---->",addTemplateData)
-  }
-  </script>
+    </Dialog>
+  </TransitionRoot>
+</template>
+
+<script setup>
+import { ref } from "vue";
+import {
+  Dialog,
+  DialogPanel,
+  DialogTitle,
+  TransitionChild,
+  TransitionRoot,
+} from "@headlessui/vue";
+import { XMarkIcon } from "@heroicons/vue/24/outline";
+
+const enabled = ref(false);
+const cdata=ref("")
+const fcm=ref("")
+const moodMessage=ref("")
+const moodIcon =ref("")
+const sound=ref()
+const status =ref("")
+const desktopNotifications =ref("")
+
+const open = ref(false);
+const notificationMethods = [
+  { id: "Yes", title: "Yes" },
+  { id: "No", title: "No" },
+];
+const addDetails = (data) => {
+  console.log(data);
+  const postOptions = {
+    body: {
+      fcm: fcm.value,
+      moodMessage: moodMessage.value,
+      moodIcon: moodIcon.value,
+      sound: sound.value,
+      desktopNotifications: desktopNotifications.value,
+      status: status.value,
+      cdata: {}
+    },
+  };
+  useAuthLazyFetchPost(
+    "https://v1-orm-emc2-messaging.mars.hipso.cc/user-prefs/",
+    postOptions
+  );
+};
+</script>
