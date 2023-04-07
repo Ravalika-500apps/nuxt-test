@@ -1,118 +1,75 @@
 <template>
-  <div
-    class="grid grid-rows-3 grid-flow-col border w-[80vw] mx-auto my-5 rounded-lg pr-[4px]"
-  >
-    <div
-      class="row-span-3 bg-gray-50 border-r p-5 rounded-l-lg h-[calc(100vh-150px)] overflow-auto"
-    >
-      <!-- Show list of created templates 
-      
-       v-if="
-          emailTemplate.data._rawValue && emailTemplate.data._rawValue.length > 1
-        "
-       -->
-      <div
-        v-for="(template,index) in emailTemplate.data._rawValue"
-        :key="index"
-        class="border p-4 rounded-md mb-3 shadow-sm bg-white flex group justify-between"
-      >
-        <section>
-          <h5 class="font-[500] text-md mb-2">{{ template.name }}</h5>
-          <span class="text-gray-600">{{ template.subject }} - </span>
-          <span class="text-gray-600">{{ template.body }}</span>
-        </section>
-        <div class="flex group-hover:visible invisible">
-          <PencilSquareIcon @click="editTemplate(template)" class="h-5 w-5" aria-hidden="true" ></PencilSquareIcon>
-          <TrashIcon @click="deleteTemplate(template.uid)" class="h-5 w-5" aria-hidden="true" ></TrashIcon>
-          </div>
+  <div class="px-4 sm:px-6 lg:px-8">
+    <div class="sm:flex sm:items-center">
+      <div class="sm:flex-auto">
+        <h1 class="text-base font-semibold leading-6 text-gray-900">User Preferences</h1>
+       
       </div>
-      <div
-        v-if="
-          emailTemplate.data._rawValue && emailTemplate.data._rawValue.length == 1
-        "
-      >
-        <span
-          ><div class="text-center">
-            <svg
-              class="mx-auto h-12 w-12 text-gray-400"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              aria-hidden="true"
-            >
-              <path
-                vector-effect="non-scaling-stroke"
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"
-              />
-            </svg>
-            <h3 class="mt-2 text-sm font-semibold text-gray-900">
-              No templates found
-            </h3>
-            <p class="mt-1 text-sm text-gray-500">
-              Get started by creating a new template.
-            </p>
-          </div>
-        </span>
+      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+        <button type="button" class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Add user prefs</button>
       </div>
     </div>
-   <CollectionAdd v-if="!show" />
-   <CollectionEdit v-if="show" :templateEmailData="editData" :key="render"/>
+    <div class="mt-8 flow-root">
+      <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+            <table class="min-w-full divide-y divide-gray-300">
+              <thead class="bg-gray-50">
+                <tr>
+                  <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Fcm</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">MoodMessage</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">MoodIcon</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Sound</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">DesktopNotification</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                  <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">cdata</th>
+                  <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <!-- <span class="sr-only">Edit</span> -->
+                   
+                  </th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200 bg-white">
+                <tr  >
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formInfo.fcm}}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ formInfo.mood_message }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ formInfo.desktop_notifications }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{formInfo.mood_message }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{formInfo.sound  }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{formInfo.status }}</td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{{ formInfo.cdata}}</td>
+                  <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                    <a href="#" class="text-indigo-600 hover:text-indigo-900"
+                      >Edit<span class="sr-only">, {{ }}</span></a
+                    >
+                    <div>
+                    <a href="#" class="text-indigo-600 hover:text-indigo-900"
+                      >Delete<span class="sr-only">, {{  }}</span></a
+                    >
+                  </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
-<script setup lang="ts">
-import { ref } from "vue";
-import { TrashIcon,PencilSquareIcon } from '@heroicons/vue/24/outline'
-const render = ref(0)
 
+<script setup>
+import {defineProps} from "vue"
 const props = defineProps({
+  detailsData: Object,
   // Get Template  Data
-  templateData: {
+  FormData: {
     type: Array,
     default: [
-      { name: "email templates", subject: "Hello", text: "Leave approved" },
+      { fcm: "email templates", moodMessage: "Hello", moodIcon: "submitted",sound: "email templates", moodMessage: "Hello", moodIcon: "submitted" ,DesktopNotification:"HIII",cdata:"hii"},
     ],
   },
 });
-const editData = ref({});
-const show = ref(false)
+const formInfo = ref(props.detailsData.data._rawValue)
 
-// Prefill data when an existing template is selected
-const editTemplate = (data: object) => {
-show.value = true
-editData.value = JSON.stringify(data)
-  render.value++;
-  console.log("------->", editData)
-
-};
-
-const getOptions = {
-  method: "GET",
-  headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiZTk3YTIxZjM4ZDc4NDgwYjlhYjdhOTI0M2Q0NjViNzgiLCJkIjoiMTY4MDA5NyIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODc4Mjd9.qFyxIJYJLihyxfui4QRMOLjJgwBr95z3N3lWRDz89ZU`,
-  },
-};
-
-var emailTemplate = await useAuthLazyFetch(
-    "https://v1-orm-lib.mars.hipso.cc/email-templates/?offset=0&limit=100&sort_column=id&sort_direction=desc",
-  getOptions
-);
-
-    const deleteTemplate = (data:any) => {
-   const deleteOptions = {
-    method: "DELETE",
-  headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1IjoiZTk3YTIxZjM4ZDc4NDgwYjlhYjdhOTI0M2Q0NjViNzgiLCJkIjoiMTY4MDA5NyIsInIiOiJzYSIsInAiOiJmcmVlIiwiYSI6ImZpbmRlci5pbyIsImwiOiJ1czEiLCJleHAiOjE2ODMyODc4Mjd9.qFyxIJYJLihyxfui4QRMOLjJgwBr95z3N3lWRDz89ZU`,
-  },
-}
-
-const deleteTemplateData = useAuthLazyFetchDelete (
-    `https://v1-orm-lib.mars.hipso.cc/email-templates/${data}`,
-deleteOptions
-)
-    }
 </script>
